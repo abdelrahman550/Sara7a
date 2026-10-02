@@ -44,6 +44,8 @@ const userSchema = new mongoose.Schema(
     confirmEmail: Date,
 
     image: String,
+    
+    changeCredentialsTime: Date,
 
     coverImage: [String],
 

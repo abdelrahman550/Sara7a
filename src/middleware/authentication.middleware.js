@@ -31,7 +31,7 @@ export const authentication = (tokenType = TokenTypeEnum.ACCESS) => {
         break;
 
       default:
-        next(BadRequestException("Invalid authentication schema"));
+        throw BadRequestException("Invalid authentication schema");
         break;
     }
     next();

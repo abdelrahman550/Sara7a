@@ -15,6 +15,16 @@ import {
 import { findById, findOne } from "../repository/index.js";
 import { RoleEnum, TokenTypeEnum } from "../enum/index.js";
 import { compare } from "./index.js";
+import { randomUUID } from "node:crypto";
+import { cacheExist, cacheSet } from "../services/index.js";
+
+export const userBaseRevokeTokenKey = ({ userId }) => {
+  return `User::${userId.toString()}::Revoke_Token`;
+};
+
+export const userRevokeTokenKey = ({ userId, jti }) => {
+  return `${userBaseRevokeTokenKey({userId})}::${jti}`;
+};
 
 export const createToken = async ({
   payload = {},
@@ -85,6 +95,14 @@ export const decodeToken = async ({
     throw UnauthorizedException("Invalid token payload.");
   }
 
+  if (
+    await cacheExist({
+      key: userRevokeTokenKey({ userId: payload.sub, jti: payload.jti }),
+    })
+  ) {
+    throw UnauthorizedException("Expired login credentials");
+  }
+
   const user = await findById({
     model: UserModel,
     id: payload.sub,
@@ -92,6 +110,10 @@ export const decodeToken = async ({
 
   if (!user) {
     throw NotFoundException("User not found.");
+  }
+
+  if ((user.changeCredentialsTime?.getTime() ?? 0) > payload.iat * 1000) {
+    throw UnauthorizedException("Expired login credentials");
   }
 
   return { user, payload };
@@ -105,6 +127,7 @@ export const createLoginCredentials = async ({
   const { accessSignature, refreshSignature } = await getTokenSignatures({
     role: user.role,
   });
+  const jwtid = randomUUID();
   const access_token = await createToken({
     payload: { sub: user._id },
     secret: accessSignature,
@@ -113,6 +136,7 @@ export const createLoginCredentials = async ({
       issuer,
       audience: [user.role],
       expiresIn: ACCESS_TOKEN_EXPIRATION,
+      jwtid,
     },
   });
 
@@ -124,6 +148,7 @@ export const createLoginCredentials = async ({
       issuer,
       audience: [user.role],
       expiresIn: REFRESH_TOKEN_EXPIRATION,
+      jwtid,
     },
   });
 
@@ -143,4 +168,17 @@ export const basicAuth = async ({ email, password }) => {
   if (!approval) throw UnauthorizedException("Invalid login credentials.");
 
   return user;
+};
+
+export const createRevokeToken = async ({ payload }) => {
+  const consumedTime = Math.ceil(Date.now() / 1000) - payload.iat;
+  const refreshExpiration = payload.iat + REFRESH_TOKEN_EXPIRATION;
+  const ttl = refreshExpiration - consumedTime;
+
+  await cacheSet({
+    key: userRevokeTokenKey({ userId: payload.sub, jti: payload.jti }),
+    value: payload.jti,
+    ttl,
+  });
+  return;
 };

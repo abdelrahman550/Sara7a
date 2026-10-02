@@ -2,7 +2,12 @@ import { Router } from "express";
 import { RoleEnum, TokenTypeEnum } from "../../common/enum/index.js";
 import { authentication, authorization } from "../../middleware/index.js";
 import { successResponse } from "./../../common/utils/index.js";
-import { getProfile, rotateToken, updateProfile } from "./users.service.js";
+import {
+  getProfile,
+  logout,
+  rotateToken,
+  updateProfile,
+} from "./users.service.js";
 
 const router = Router();
 router.get("/", authentication(), async (req, res, next) => {
@@ -47,5 +52,14 @@ router.post(
     });
   },
 );
+
+router.post("/logout", authentication(), async (req, res, next) => {
+  await logout(req.payload, req.user, req.body);
+  return successResponse({
+    res,
+    message: "Success.",
+    status: 200,
+  });
+});
 
 export default router;

@@ -38,6 +38,7 @@ export const signup = async ({
   image,
   coverImage,
   gender,
+  role,
 }) => {
   const duplicatedUser = await findOne({
     model: UserModel,
@@ -59,10 +60,11 @@ export const signup = async ({
       image,
       coverImage,
       gender,
+      role,
     },
   });
 
-  return await account
+  return await account;
 };
 
 export const signupWithGmail = async ({ idToken }, issuer) => {
@@ -103,7 +105,7 @@ export const signupWithGmail = async ({ idToken }, issuer) => {
 export const login = async ({ email, password }, issuer) => {
   const user = await findOne({
     model: UserModel,
-    filter: { email , provider : ProviderEnum.SYSTEM },
+    filter: { email, provider: ProviderEnum.SYSTEM },
   });
 
   if (!user) throw UnauthorizedException("Invalid login credentials.");
