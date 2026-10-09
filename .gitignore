@@ -28,3 +28,9 @@ Thumbs.db
 # Temporary files
 tmp/
 temp/
+
+# Build / generated files
+dist/
+build/
+coverage/
+assets/
