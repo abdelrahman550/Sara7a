@@ -44,3 +44,7 @@ export const cacheTTL = async ({ key } = {}) => {
 export const cacheExpire = async ({ key, ttl } = {}) => {
   return await client.expire(key, ttl);
 };
+
+export const cacheIncrementBy = async ({ key, value = 1 } = {}) => {
+  return await client.incrBy(key, value);
+};

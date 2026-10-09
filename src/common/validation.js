@@ -5,6 +5,8 @@ import { VALIDATION_CODES, getValidationMessage } from "./messages/index.js";
 const PASSWORD_REGEX =
   /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,64}$/;
 
+const OTP_REGEX = /^\d{6}$/;
+
 const requiredOrInvalid = (lang, requiredCode, invalidCode) => (issue) =>
   issue.input === undefined
     ? getValidationMessage(requiredCode, lang)
@@ -61,6 +63,20 @@ export const generalValidationFields = {
         ),
       })
       .min(1, getValidationMessage(VALIDATION_CODES.PASSWORD_REQUIRED, lang)),
+
+  otp: (lang) =>
+    z
+      .string({
+        error: requiredOrInvalid(
+          lang,
+          VALIDATION_CODES.OTP_REQUIRED,
+          VALIDATION_CODES.OTP_INVALID,
+        ),
+      })
+      .regex(
+        OTP_REGEX,
+        getValidationMessage(VALIDATION_CODES.OTP_FORMAT, lang),
+      ),
 
   userName: (lang) =>
     z

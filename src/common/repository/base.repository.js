@@ -155,3 +155,7 @@ export const deleteMany = async ({ filter, model }) => {
 export const findOneAndDelete = async ({ filter, model } = {}) => {
   return await model.findOneAndDelete(filter || {});
 };
+
+export const hydrate = ({ data, model }) => {
+  return model.hydrate(data);
+};

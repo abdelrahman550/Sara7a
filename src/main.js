@@ -11,6 +11,7 @@ import { authenticationController, usersController } from "./modules/index.js";
 const app = express();
 
 app.use(cors());
+app.use("/assets" , express.static("./assets"))
 app.use(express.json());
 
 app.use("/users", usersController);

@@ -8,4 +8,3 @@ export const RoleEnum = {
   ADMIN: 1,
 };
 
-

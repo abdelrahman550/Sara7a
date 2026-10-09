@@ -8,12 +8,10 @@ import {
   userBaseRevokeTokenKey,
 } from "../../common/security/index.js";
 import { cacheDelete, cacheKeys } from "../../common/services/cache.service.js";
+import { invalidateUserCache } from "../../common/services/index.js";
 import { ACCESS_TOKEN_EXPIRATION } from "../../config.js";
 import { UserModel } from "../../DB/models/user.model.js";
-
-export const getProfile = async (user) => {
-  return user;
-};
+import { userResponse } from "./index.js";
 
 export const updateProfile = async (
   user,
@@ -28,8 +26,9 @@ export const updateProfile = async (
     id: user._id,
     update,
   });
+  await invalidateUserCache({ userId: user._id });
 
-  return updateUser;
+  return userResponse(updateUser);
 };
 
 export const rotateToken = async (payload, user, issuer) => {
@@ -50,6 +49,7 @@ export const logout = async (payload, user, { action = LogoutEnum.ONE }) => {
     case LogoutEnum.ALL:
       user.changeCredentialsTime = new Date();
       await user.save();
+      await invalidateUserCache({ userId: user._id });
 
       await cacheDelete({
         key: await cacheKeys({

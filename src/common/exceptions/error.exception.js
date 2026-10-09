@@ -9,11 +9,15 @@ export class AppError extends Error {
   }
 }
 
-export const BadRequestException = (message = "Bad Request", extra = undefined) =>
-  new AppError(message, 400, extra);
+export const BadRequestException = (
+  message = "Bad Request",
+  extra = undefined,
+) => new AppError(message, 400, extra);
 
-export const UnauthorizedException = (message = "Unauthorized", extra = undefined) =>
-  new AppError(message, 401, extra);
+export const UnauthorizedException = (
+  message = "Unauthorized",
+  extra = undefined,
+) => new AppError(message, 401, extra);
 
 export const ForbiddenException = (message = "Forbidden", extra = undefined) =>
   new AppError(message, 403, extra);
@@ -24,8 +28,17 @@ export const NotFoundException = (message = "Not Found", extra = undefined) =>
 export const ConflictException = (message = "Conflict", extra = undefined) =>
   new AppError(message, 409, extra);
 
-export const ValidationException = (message = "Validation Error", extra = undefined) =>
-  new AppError(message, 422, extra);
+export const ValidationException = (
+  message = "Validation Error",
+  extra = undefined,
+) => new AppError(message, 422, extra);
 
-export const InternalServerErrorException = (message = "Internal Server Error", extra = undefined) =>
-  new AppError(message, 500, extra);
+export const InternalServerErrorException = (
+  message = "Internal Server Error",
+  extra = undefined,
+) => new AppError(message, 500, extra);
+
+export const TooManyRequestsException = (
+  message = "Too Many Requests",
+  extra = undefined,
+) => new AppError(message, 429, extra);

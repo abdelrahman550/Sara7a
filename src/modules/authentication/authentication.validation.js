@@ -58,3 +58,54 @@ export const signup = (lang) => {
     body: signupSchema(lang),
   });
 };
+
+export const emailAndCodeSchema = (lang) => {
+  return z.strictObject({
+    email: generalValidationFields.email(lang),
+    otp: generalValidationFields.otp(lang),
+  });
+};
+
+export const emailAndCode = (lang) => {
+  return z.object({
+    body: emailAndCodeSchema(lang),
+  });
+};
+
+export const emailConfirmationSchema = (lang) => {
+  return z.strictObject({
+    email: generalValidationFields.email(lang),
+  });
+};
+
+export const emailConfirmation = (lang) => {
+  return z.object({
+    body: emailConfirmationSchema(lang),
+  });
+};
+
+export const resetForgottenPasswordSchema = (lang) => {
+  return z
+    .strictObject({
+      email: generalValidationFields.email(lang),
+      otp: generalValidationFields.otp(lang),
+      password: generalValidationFields.password(lang),
+      confirmPassword: generalValidationFields.passwordPresence(lang),
+    })
+    .superRefine((data, ctx) => {
+      generalValidationFields.matchFields({
+        original: "password",
+        copy: "confirmPassword",
+        data,
+        ctx,
+        lang,
+        code: VALIDATION_CODES.PASSWORD_MISMATCH,
+      });
+    });
+};
+
+export const resetForgottenPassword = (lang) => {
+  return z.object({
+    body: resetForgottenPasswordSchema(lang),
+  });
+};

@@ -1,17 +1,22 @@
 import { Router } from "express";
 import { RoleEnum, TokenTypeEnum } from "../../common/enum/index.js";
-import { authentication, authorization } from "../../middleware/index.js";
-import { successResponse } from "./../../common/utils/index.js";
 import {
-  getProfile,
-  logout,
-  rotateToken,
-  updateProfile,
-} from "./users.service.js";
+  authentication,
+  authorization,
+  multerUpload,
+} from "../../middleware/index.js";
+import {
+  fileTypeValidation,
+  localFileUpload,
+  successResponse,
+} from "./../../common/utils/index.js";
+import { userResponse } from "./index.js";
+import { logout, rotateToken, updateProfile } from "./users.service.js";
+import { invalidateUserCache } from "../../common/services/index.js";
 
 const router = Router();
 router.get("/", authentication(), async (req, res, next) => {
-  const data = await getProfile(req.user);
+  const data = await userResponse(req.user);
   return successResponse({
     res,
     message: "Success.",
@@ -19,6 +24,29 @@ router.get("/", authentication(), async (req, res, next) => {
     data,
   });
 });
+
+router.post(
+  "/profile-image",
+  authentication(),
+  multerUpload({
+    multerMiddleware: localFileUpload({ maxFileSize: 3 }).single("attachment"),
+    customPath: "users",
+    validation: fileTypeValidation.images,
+  }),
+
+  async (req, res, next) => {
+    req.user.image = req.file.finalPath;
+    await req.user.save();
+    await invalidateUserCache({ userId: req.user._id });
+
+    return successResponse({
+      res,
+      message: "Success.",
+      status: 200,
+      data: { user: await userResponse(req.user) },
+    });
+  },
+);
 
 router.patch(
   "/",

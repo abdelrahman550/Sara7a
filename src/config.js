@@ -3,10 +3,15 @@ import { config } from "dotenv";
 
 config({ path: resolve(`.env.${process.env.NODE_ENV ?? "dev"}`) });
 
+export const APPLICATION_NAME = process.env.APPLICATION_NAME;
+
 export const PORT = parseInt(process.env.PORT ?? "5000");
 export const DB_URI = process.env.DB_URI;
 
 export const REDIS_URI = process.env.REDIS_URI;
+
+export const APP_EMAIL = process.env.APP_EMAIL;
+export const APP_PASSWORD = process.env.APP_PASSWORD;
 
 export const ENC_KEY = process.env.ENC_KEY;
 export const IV_LENGTH = parseInt(process.env.IV_LENGTH ?? 16);
@@ -28,3 +33,6 @@ export const REFRESH_TOKEN_EXPIRATION = parseInt(
 );
 
 export const WEB_CLIENT_IDS = process.env.WEB_CLIENT_IDS.split(",");
+
+export const LOGIN_MAX_ATTEMPTS = process.env.LOGIN_MAX_ATTEMPTS ?? 5;
+export const LOGIN_BLOCK_TIME = process.env.LOGIN_BLOCK_TIME ?? 300;

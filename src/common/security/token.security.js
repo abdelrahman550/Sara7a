@@ -12,18 +12,24 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from "../exceptions/index.js";
-import { findById, findOne } from "../repository/index.js";
+import { findById, findOne, hydrate } from "../repository/index.js";
 import { RoleEnum, TokenTypeEnum } from "../enum/index.js";
 import { compare } from "./index.js";
 import { randomUUID } from "node:crypto";
-import { cacheExist, cacheSet } from "../services/index.js";
+import {
+  cacheExist,
+  cacheGet,
+  cacheSet,
+  USER_CACHE_TTL,
+  userCacheKey,
+} from "../services/index.js";
 
 export const userBaseRevokeTokenKey = ({ userId }) => {
   return `User::${userId.toString()}::Revoke_Token`;
 };
 
 export const userRevokeTokenKey = ({ userId, jti }) => {
-  return `${userBaseRevokeTokenKey({userId})}::${jti}`;
+  return `${userBaseRevokeTokenKey({ userId })}::${jti}`;
 };
 
 export const createToken = async ({
@@ -103,10 +109,23 @@ export const decodeToken = async ({
     throw UnauthorizedException("Expired login credentials");
   }
 
-  const user = await findById({
-    model: UserModel,
-    id: payload.sub,
+  const cachedUser = await cacheGet({
+    key: userCacheKey({ userId: payload.sub }),
   });
+
+  let user;
+  if (cachedUser) {
+    user = hydrate({ model: UserModel, data: cachedUser });
+  } else {
+    user = await findById({ model: UserModel, id: payload.sub });
+    if (user) {
+      await cacheSet({
+        key: userCacheKey({ userId: payload.sub }),
+        value: user.toObject(),
+        ttl: USER_CACHE_TTL,
+      });
+    }
+  }
 
   if (!user) {
     throw NotFoundException("User not found.");

@@ -20,6 +20,10 @@ export const VALIDATION_CODES = {
   GENDER_INVALID: 1012,
 
   FIELDS_MISMATCH: 1014,
+
+  OTP_REQUIRED: 1018,
+  OTP_INVALID: 1019,
+  OTP_FORMAT: 1020,
 };
 
 export const validationMessages = {
@@ -87,6 +91,19 @@ export const validationMessages = {
   [VALIDATION_CODES.FIELDS_MISMATCH]: {
     [LanguageEnum.EN]: "{original} and {copy} must match.",
     [LanguageEnum.AR]: "يجب أن يتطابق {original} مع {copy}.",
+  },
+
+  [VALIDATION_CODES.OTP_REQUIRED]: {
+    [LanguageEnum.EN]: "Verification code is required.",
+    [LanguageEnum.AR]: "رمز التحقق مطلوب.",
+  },
+  [VALIDATION_CODES.OTP_INVALID]: {
+    [LanguageEnum.EN]: "Verification code must be a valid text value.",
+    [LanguageEnum.AR]: "يجب أن يكون رمز التحقق نصًا صالحًا.",
+  },
+  [VALIDATION_CODES.OTP_FORMAT]: {
+    [LanguageEnum.EN]: "Verification code must be exactly 6 digits.",
+    [LanguageEnum.AR]: "يجب أن يتكون رمز التحقق من 6 أرقام بالضبط.",
   },
 };
 
