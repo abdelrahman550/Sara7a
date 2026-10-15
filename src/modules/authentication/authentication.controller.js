@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { successResponse } from "../../common/utils/index.js";
+import { generateLimiter, successResponse } from "../../common/utils/index.js";
 import { validation } from "../../middleware/index.js";
 import {
   confirmEmail,
@@ -12,11 +12,12 @@ import {
   sendForgottenPasswordCode,
   signup,
   signupWithGmail,
-  verifyForgottenPasswordCode
+  verifyForgottenPasswordCode,
 } from "./authentication.service.js";
 import * as validators from "./authentication.validation.js";
+import { cacheDelete } from "../../common/services/cache.service.js";
 
-const router = Router();
+const router = Router({ caseSensitive: true });
 
 router.post(
   "/signup",
@@ -136,30 +137,46 @@ router.post("/signup-with-gmail", async (req, res, next) => {
   });
 });
 
-router.post("/login", validation(validators.login), async (req, res, next) => {
-  const data = await manageLogin(
-    req.validate.body,
-    `${req.protocol}://${req.host}`,
-  );
-  return successResponse({
-    res,
-    message: "Success.",
-    status: 200,
-    data,
-  });
+const loginLimiter = generateLimiter({
+  limitCount: 5,
+  ttl: 5,
+  skipSuccessfulRequests: true,
 });
 
-router.post("/verify-2FA-code", validation(validators.emailAndCode), async (req, res, next) => {
-  const data = await loginWith2FA(
-    req.validate.body,
-    `${req.protocol}://${req.host}`,
-  );
-  return successResponse({
-    res,
-    message: "Success.",
-    status: 200,
-    data,
-  });
-});
+router.post(
+  "/login",
+  loginLimiter,
+  validation(validators.login),
+  async (req, res, next) => {
+    const data = await manageLogin(
+      req.validate.body,
+      `${req.protocol}://${req.host}`,
+    );
+    await cacheDelete({ key: req.rateLimit.key });
+    return successResponse({
+      res,
+      message: "Success.",
+      status: 200,
+      data,
+    });
+  },
+);
+
+router.post(
+  "/verify-2FA-code",
+  validation(validators.emailAndCode),
+  async (req, res, next) => {
+    const data = await loginWith2FA(
+      req.validate.body,
+      `${req.protocol}://${req.host}`,
+    );
+    return successResponse({
+      res,
+      message: "Success.",
+      status: 200,
+      data,
+    });
+  },
+);
 
 export default router;

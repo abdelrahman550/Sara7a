@@ -8,6 +8,7 @@ export const validation = (schema) => {
       body: req.body,
       query: req.query,
       params: req.params,
+      files: req.files,
     });
 
     if (!validationResult.success)

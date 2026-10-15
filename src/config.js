@@ -6,6 +6,7 @@ config({ path: resolve(`.env.${process.env.NODE_ENV ?? "dev"}`) });
 export const APPLICATION_NAME = process.env.APPLICATION_NAME;
 
 export const PORT = parseInt(process.env.PORT ?? "5000");
+export const ORIGINS = process.env.ORIGINS;
 export const DB_URI = process.env.DB_URI;
 
 export const REDIS_URI = process.env.REDIS_URI;

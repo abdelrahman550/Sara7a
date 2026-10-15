@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { GenderEnum, LanguageEnum } from "./enum/index.js";
 import { VALIDATION_CODES, getValidationMessage } from "./messages/index.js";
+import mongoose from "mongoose";
 
 const PASSWORD_REGEX =
   /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,64}$/;
@@ -27,6 +28,15 @@ const matchFields = ({
       message: getValidationMessage(code, lang, { original, copy }),
     });
   }
+};
+
+const nameField = (lang, code) => {
+  const message = getValidationMessage(code, lang);
+  return z
+    .string({ error: () => message })
+    .trim()
+    .min(2, message)
+    .max(25, message);
 };
 
 export const generalValidationFields = {
@@ -89,6 +99,17 @@ export const generalValidationFields = {
       })
       .min(1, getValidationMessage(VALIDATION_CODES.USERNAME_REQUIRED, lang)),
 
+  firstName: (lang) => nameField(lang, VALIDATION_CODES.FIRST_NAME_INVALID),
+
+  lastName: (lang) => nameField(lang, VALIDATION_CODES.LAST_NAME_INVALID),
+
+  DOB: (lang) => {
+    const message = getValidationMessage(VALIDATION_CODES.DOB_INVALID, lang);
+    return z.iso
+      .date({ error: () => message })
+      .refine((value) => new Date(value) <= new Date(), { message });
+  },
+
   phone: (lang) =>
     z.e164({
       error: requiredOrInvalid(
@@ -106,6 +127,69 @@ export const generalValidationFields = {
         VALIDATION_CODES.GENDER_INVALID,
       ),
     }),
+
+  messageContent: (lang) =>
+    z
+      .string({
+        error: requiredOrInvalid(
+          lang,
+          VALIDATION_CODES.MESSAGE_CONTENT_REQUIRED,
+          VALIDATION_CODES.MESSAGE_CONTENT_INVALID,
+        ),
+      })
+      .min(
+        2,
+        getValidationMessage(VALIDATION_CODES.MESSAGE_CONTENT_MIN, lang, {
+          min: 2,
+        }),
+      )
+      .max(
+        50000,
+        getValidationMessage(VALIDATION_CODES.MESSAGE_CONTENT_MAX, lang, {
+          max: 50000,
+        }),
+      ),
+
+  mongoId: (lang) =>
+    z
+      .string({
+        error: requiredOrInvalid(
+          lang,
+          VALIDATION_CODES.ID_REQUIRED,
+          VALIDATION_CODES.ID_INVALID,
+        ),
+      })
+      .refine((data) => mongoose.Types.ObjectId.isValid(data), {
+        message: getValidationMessage(VALIDATION_CODES.ID_INVALID, lang),
+      }),
+
+  messageFiles: (lang) =>
+    z
+      .array(
+        z.strictObject(
+          {
+            fieldname: z.string(),
+            originalname: z.string(),
+            encoding: z.string(),
+            mimetype: z.string(),
+            buffer: z.instanceof(Buffer),
+            size: z.number(),
+            path: z.string(),
+          },
+          {
+            error: () =>
+              getValidationMessage(VALIDATION_CODES.FILE_INVALID, lang),
+          },
+        ),
+        {
+          error: () =>
+            getValidationMessage(VALIDATION_CODES.FILES_INVALID, lang),
+        },
+      )
+      .max(
+        3,
+        getValidationMessage(VALIDATION_CODES.FILES_MAX, lang, { max: 3 }),
+      ),
 
   matchFields,
 };

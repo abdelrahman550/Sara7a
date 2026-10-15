@@ -24,6 +24,30 @@ export const VALIDATION_CODES = {
   OTP_REQUIRED: 1018,
   OTP_INVALID: 1019,
   OTP_FORMAT: 1020,
+
+  MESSAGE_CONTENT_REQUIRED: 1021,
+  MESSAGE_CONTENT_INVALID: 1022,
+  MESSAGE_CONTENT_MIN: 1023,
+  MESSAGE_CONTENT_MAX: 1024,
+
+  ID_REQUIRED: 1025,
+  ID_INVALID: 1026,
+
+  FILES_INVALID: 1027,
+  FILES_MAX: 1028,
+  FILE_INVALID: 1029,
+
+  MESSAGE_EMPTY: 1030,
+
+  MESSAGE_TYPE_INVALID: 1031,
+
+  REVEAL_DECISION_INVALID: 1032,
+  REVEAL_STATUS_INVALID: 1033,
+
+  FIRST_NAME_INVALID: 1034,
+  LAST_NAME_INVALID: 1035,
+  DOB_INVALID: 1036,
+  UPDATE_EMPTY: 1037,
 };
 
 export const validationMessages = {
@@ -104,6 +128,85 @@ export const validationMessages = {
   [VALIDATION_CODES.OTP_FORMAT]: {
     [LanguageEnum.EN]: "Verification code must be exactly 6 digits.",
     [LanguageEnum.AR]: "يجب أن يتكون رمز التحقق من 6 أرقام بالضبط.",
+  },
+
+  [VALIDATION_CODES.MESSAGE_CONTENT_REQUIRED]: {
+    [LanguageEnum.EN]: "Message content is required.",
+    [LanguageEnum.AR]: "محتوى الرسالة مطلوب.",
+  },
+  [VALIDATION_CODES.MESSAGE_CONTENT_INVALID]: {
+    [LanguageEnum.EN]: "Message content must be a valid text value.",
+    [LanguageEnum.AR]: "يجب أن يكون محتوى الرسالة نصًا صالحًا.",
+  },
+  [VALIDATION_CODES.MESSAGE_CONTENT_MIN]: {
+    [LanguageEnum.EN]: "Message must be at least {min} characters long.",
+    [LanguageEnum.AR]: "يجب ألا يقل طول الرسالة عن {min} أحرف.",
+  },
+  [VALIDATION_CODES.MESSAGE_CONTENT_MAX]: {
+    [LanguageEnum.EN]: "Message must not exceed {max} characters.",
+    [LanguageEnum.AR]: "يجب ألا يزيد طول الرسالة عن {max} حرف.",
+  },
+
+  [VALIDATION_CODES.ID_REQUIRED]: {
+    [LanguageEnum.EN]: "ID is required.",
+    [LanguageEnum.AR]: "المعرّف مطلوب.",
+  },
+  [VALIDATION_CODES.ID_INVALID]: {
+    [LanguageEnum.EN]: "Invalid ID format.",
+    [LanguageEnum.AR]: "صيغة المعرّف غير صحيحة.",
+  },
+
+  [VALIDATION_CODES.FILES_INVALID]: {
+    [LanguageEnum.EN]: "Files must be a valid list.",
+    [LanguageEnum.AR]: "يجب أن تكون الملفات قائمة صالحة.",
+  },
+  [VALIDATION_CODES.FILES_MAX]: {
+    [LanguageEnum.EN]: "You can upload up to {max} files only.",
+    [LanguageEnum.AR]: "يمكنك رفع {max} ملفات كحد أقصى.",
+  },
+  [VALIDATION_CODES.FILE_INVALID]: {
+    [LanguageEnum.EN]: "One or more uploaded files are invalid.",
+    [LanguageEnum.AR]: "ملف واحد أو أكثر من الملفات المرفوعة غير صالح.",
+  },
+
+  [VALIDATION_CODES.MESSAGE_EMPTY]: {
+    [LanguageEnum.EN]: "Message must contain text or at least one file.",
+    [LanguageEnum.AR]: "يجب أن تحتوي الرسالة على نص أو ملف واحد على الأقل.",
+  },
+
+  [VALIDATION_CODES.MESSAGE_TYPE_INVALID]: {
+    [LanguageEnum.EN]: "Type must be 0 (received), 1 (sent) or 2 (both).",
+    [LanguageEnum.AR]: "يجب أن يكون النوع 0 (مستلمة) أو 1 (مرسلة) أو 2 (الكل).",
+  },
+
+  [VALIDATION_CODES.REVEAL_DECISION_INVALID]: {
+    [LanguageEnum.EN]: 'Decision must be either "approved" or "rejected".',
+    [LanguageEnum.AR]:
+      "يجب أن يكون القرار إما \u2066approved\u2069 أو \u2066rejected\u2069.",
+  },
+  [VALIDATION_CODES.REVEAL_STATUS_INVALID]: {
+    [LanguageEnum.EN]: "Status must be one of: pending, approved, rejected.",
+    [LanguageEnum.AR]:
+      "يجب أن تكون الحالة إحدى القيم: \u2066pending\u2069 أو \u2066approved\u2069 أو \u2066rejected\u2069.",
+  },
+
+   [VALIDATION_CODES.FIRST_NAME_INVALID]: {
+    [LanguageEnum.EN]: "First name must be between 2 and 25 characters.",
+    [LanguageEnum.AR]: "يجب أن يتكون الاسم الأول من 2 إلى 25 حرفًا.",
+  },
+  [VALIDATION_CODES.LAST_NAME_INVALID]: {
+    [LanguageEnum.EN]: "Last name must be between 2 and 25 characters.",
+    [LanguageEnum.AR]: "يجب أن يتكون الاسم الأخير من 2 إلى 25 حرفًا.",
+  },
+  [VALIDATION_CODES.DOB_INVALID]: {
+    [LanguageEnum.EN]:
+      "Date of birth must be a valid date (YYYY-MM-DD) and cannot be in the future.",
+    [LanguageEnum.AR]:
+      "يجب أن يكون تاريخ الميلاد تاريخًا صالحًا بالصيغة \u2066YYYY-MM-DD\u2069 وألا يكون في المستقبل.",
+  },
+  [VALIDATION_CODES.UPDATE_EMPTY]: {
+    [LanguageEnum.EN]: "At least one field must be provided to update.",
+    [LanguageEnum.AR]: "يجب إرسال حقل واحد على الأقل للتحديث.",
   },
 };
 

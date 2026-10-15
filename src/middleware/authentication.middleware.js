@@ -6,6 +6,19 @@ import {
 } from "../common/exceptions/index.js";
 import { basicAuth, decodeToken } from "../common/security/index.js";
 
+export const bearerAuth = async ({
+  req,
+  tokenType = TokenTypeEnum.ACCESS,
+} = {}) => {
+  const [key, credential] = req.headers["authorization"]?.split(" ") || [];
+  const { user, payload } = await decodeToken({
+    authorization: credential,
+    tokenType,
+  });
+  req.user = user;
+  req.payload = payload;
+};
+
 export const authentication = (tokenType = TokenTypeEnum.ACCESS) => {
   return async (req, res, next) => {
     const { authorization } = req.headers;
@@ -22,12 +35,7 @@ export const authentication = (tokenType = TokenTypeEnum.ACCESS) => {
         req.user = await basicAuth({ email, password });
         break;
       case "Bearer":
-        const { user, payload } = await decodeToken({
-          authorization: credential,
-          tokenType,
-        });
-        req.user = user;
-        req.payload = payload;
+        await bearerAuth({req , tokenType});
         break;
 
       default:

@@ -4,6 +4,7 @@ import {
   authentication,
   authorization,
   multerUpload,
+  validation,
 } from "../../middleware/index.js";
 import {
   fileTypeValidation,
@@ -13,6 +14,7 @@ import {
 import { userResponse } from "./index.js";
 import { logout, rotateToken, updateProfile } from "./users.service.js";
 import { invalidateUserCache } from "../../common/services/index.js";
+import * as validators from "./users.validation.js";
 
 const router = Router();
 router.get("/", authentication(), async (req, res, next) => {
@@ -35,7 +37,7 @@ router.post(
   }),
 
   async (req, res, next) => {
-    req.user.image = req.file.finalPath;
+    req.user.image = req.file.path;
     await req.user.save();
     await invalidateUserCache({ userId: req.user._id });
 
@@ -52,8 +54,9 @@ router.patch(
   "/",
   authentication(),
   authorization(RoleEnum.USER),
+  validation(validators.updateProfile),
   async (req, res, next) => {
-    const data = await updateProfile(req.user, req.body);
+    const data = await updateProfile(req.user, req.validate.body);
     return successResponse({
       res,
       message: "Success.",

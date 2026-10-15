@@ -36,6 +36,10 @@ export const find = async ({ filter, options, select, model } = {}) => {
   if (options?.lean) {
     doc.lean(options.lean);
   }
+
+  if (options?.sort) {
+    doc.sort(options.sort);
+  }
   return await doc.exec();
 };
 export const paginate = async ({
