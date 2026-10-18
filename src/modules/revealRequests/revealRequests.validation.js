@@ -13,7 +13,7 @@ const paginationQuery = {
 
 export const createRevealRequest = (lang) => {
   return z.object({
-    body: z.strictObject({
+    params: z.strictObject({
       messageId: generalValidationFields.mongoId(lang),
     }),
   });
@@ -45,8 +45,6 @@ export const decideRevealRequest = (lang) => {
   return z.object({
     params: z.object({
       requestId: generalValidationFields.mongoId(lang),
-    }),
-    body: z.strictObject({
       decision: z.enum(
         [revealRequestStatusEnum.APPROVED, revealRequestStatusEnum.REJECTED],
         {

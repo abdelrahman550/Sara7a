@@ -1,7 +1,7 @@
 export const messagesFilterEnum = {
-  RECEIVED: 0,
-  SENT: 1,
-  BOTH: 2,
+  RECEIVED: "received",
+  SENT: "sent",
+  BOTH: "both",
 };
 
 export const revealStatusEnum = {

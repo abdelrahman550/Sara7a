@@ -12,11 +12,11 @@ import * as validators from "./revealRequests.validation.js";
 const router = Router({ caseSensitive: true });
 
 router.post(
-  "/",
+  "/:messageId",
   authentication(),
   validation(validators.createRevealRequest),
   async (req, res, next) => {
-    const data = await createRevealRequest(req.validate.body, req.user);
+    const data = await createRevealRequest(req.validate.params, req.user);
     return successResponse({
       res,
       message: "Reveal request created successfully.",
@@ -57,13 +57,12 @@ router.get(
 );
 
 router.patch(
-  "/:requestId/decision",
+  "/:requestId/:decision",
   authentication(),
   validation(validators.decideRevealRequest),
   async (req, res, next) => {
     const data = await decideRevealRequest(
       req.validate.params,
-      req.validate.body,
       req.user,
     );
     return successResponse({

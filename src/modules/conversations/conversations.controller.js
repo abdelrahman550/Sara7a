@@ -2,29 +2,13 @@ import { Router } from "express";
 import { successResponse } from "../../common/utils/index.js";
 import { authentication, validation } from "../../middleware/index.js";
 import {
-  createConversation,
   getConversationMessages,
   getConversations,
-  sendConversationMessage,
+  sendConversationMessage
 } from "./conversations.service.js";
 import * as validators from "./conversations.validation.js";
 
 const router = Router({ caseSensitive: true });
-
-router.post(
-  "/",
-  authentication(),
-  validation(validators.createConversation),
-  async (req, res, next) => {
-    const data = await createConversation(req.validate.body, req.user);
-    return successResponse({
-      res,
-      message: "Conversation created successfully.",
-      status: 201,
-      data,
-    });
-  },
-);
 
 router.get(
   "/",

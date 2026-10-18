@@ -6,14 +6,6 @@ const paginationQuery = {
   limit: z.coerce.number().int().min(1).max(50).default(5),
 };
 
-export const createConversation = (lang) => {
-  return z.object({
-    body: z.strictObject({
-      revealRequestId: generalValidationFields.mongoId(lang),
-    }),
-  });
-};
-
 export const gettingConversations = (lang) => {
   return z.object({
     query: z.object({ ...paginationQuery }),

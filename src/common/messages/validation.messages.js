@@ -175,8 +175,9 @@ export const validationMessages = {
   },
 
   [VALIDATION_CODES.MESSAGE_TYPE_INVALID]: {
-    [LanguageEnum.EN]: "Type must be 0 (received), 1 (sent) or 2 (both).",
-    [LanguageEnum.AR]: "يجب أن يكون النوع 0 (مستلمة) أو 1 (مرسلة) أو 2 (الكل).",
+    [LanguageEnum.EN]: "Type must be one of: received, sent, both.",
+    [LanguageEnum.AR]:
+      "يجب أن يكون النوع إحدى القيم التالية: \u2066received\u2069، \u2066sent\u2069، \u2066both\u2069.",
   },
 
   [VALIDATION_CODES.REVEAL_DECISION_INVALID]: {
@@ -190,7 +191,7 @@ export const validationMessages = {
       "يجب أن تكون الحالة إحدى القيم: \u2066pending\u2069 أو \u2066approved\u2069 أو \u2066rejected\u2069.",
   },
 
-   [VALIDATION_CODES.FIRST_NAME_INVALID]: {
+  [VALIDATION_CODES.FIRST_NAME_INVALID]: {
     [LanguageEnum.EN]: "First name must be between 2 and 25 characters.",
     [LanguageEnum.AR]: "يجب أن يتكون الاسم الأول من 2 إلى 25 حرفًا.",
   },

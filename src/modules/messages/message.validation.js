@@ -36,12 +36,11 @@ export const gettingMessages = (lang) => {
 
   return z.object({
     query: z.object({
-      type: z.coerce
-        .number({ error: typeError })
-        .pipe(z.enum(messagesFilterEnum, { error: typeError }))
+      type: z
+        .enum(messagesFilterEnum, { error: typeError })
         .default(messagesFilterEnum.RECEIVED),
-      page: z.coerce.number().default(1),
-      limit: z.coerce.number().default(5),
+      page: z.coerce.number().int().min(1).default(1),
+      limit: z.coerce.number().int().min(1).max(50).default(5),
     }),
   });
 };

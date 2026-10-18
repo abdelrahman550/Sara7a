@@ -378,6 +378,15 @@ export const loginWith2FA = async ({ otp, email }, issuer) => {
     throw BadRequestException("Invalid or expired verification code.");
   }
 
+  await cacheDelete({
+    key: await cacheKeys({
+      prefix: userEmailKey({
+        email,
+        subject: EmailSubjectEnum.LOGIN_TWO_FACTOR,
+      }),
+    }),
+  });
+
   return await createLoginCredentials({ user, issuer });
 };
 
@@ -425,6 +434,15 @@ export const enable2StepVerification = async ({ otp, email }) => {
   existingAccount.twoStepVerification = true;
   await existingAccount.save();
   await invalidateUserCache({ userId: existingAccount._id });
+
+  await cacheDelete({
+    key: await cacheKeys({
+      prefix: userEmailKey({
+        email,
+        subject: EmailSubjectEnum.ENABLE_TWO_FACTOR,
+      }),
+    }),
+  });
 
   return;
 };

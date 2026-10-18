@@ -160,12 +160,7 @@ export const getSentRevealRequests = async ({ page, limit } = {}, user) => {
   };
 };
 
-export const decideRevealRequest = async (
-  { requestId },
-  { decision },
-  user,
-) => {
-
+export const decideRevealRequest = async ({ requestId, decision }, user) => {
   const request = await findOne({
     model: RevealRequestModel,
     filter: { _id: requestId, senderId: user._id },

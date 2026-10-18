@@ -1,19 +1,8 @@
-import { revealRequestStatusEnum } from "../../common/enum/index.js";
-import {
-  ConflictException,
-  ForbiddenException,
-  NotFoundException,
-} from "../../common/exceptions/index.js";
-import {
-  create,
-  findById,
-  findOne,
-  paginate,
-} from "../../common/repository/index.js";
+import { NotFoundException } from "../../common/exceptions/index.js";
+import { create, findOne, paginate } from "../../common/repository/index.js";
 import {
   ConversationMessageModel,
   ConversationModel,
-  RevealRequestModel,
 } from "../../DB/models/index.js";
 import {
   conversationMessageResponse,
@@ -40,71 +29,6 @@ const findParticipantConversation = async ({ conversationId, user }) => {
   }
 
   return conversation;
-};
-
-export const createConversation = async ({ revealRequestId }, user) => {
-  const request = await findOne({
-    model: RevealRequestModel,
-    filter: { _id: revealRequestId, ...participantFilter(user) },
-  });
-
-  if (!request) {
-    throw NotFoundException("Reveal request not found.");
-  }
-
-  if (request.status !== revealRequestStatusEnum.APPROVED) {
-    throw ForbiddenException(
-      "The identity request must be approved before starting a conversation.",
-    );
-  }
-
-  const duplicateError = async () => {
-    const existing = await findOne({
-      model: ConversationModel,
-      filter: { revealRequestId: request._id },
-      select: "_id",
-    });
-    return ConflictException(
-      "A conversation already exists for this request.",
-      { conversationId: existing?._id },
-    );
-  };
-
-  if (
-    await findOne({
-      model: ConversationModel,
-      filter: { revealRequestId: request._id },
-      select: "_id",
-    })
-  ) {
-    throw await duplicateError();
-  }
-
-  let conversation;
-  try {
-    conversation = await create({
-      model: ConversationModel,
-      data: {
-        messageId: request.messageId,
-        revealRequestId: request._id,
-        senderId: request.senderId,
-        receiverId: request.receiverId,
-      },
-    });
-  } catch (error) {
-    if (error?.code === 11000) {
-      throw await duplicateError();
-    }
-    throw error;
-  }
-
-  const populated = await findById({
-    model: ConversationModel,
-    id: conversation._id,
-    options: { populate: participantsPopulate },
-  });
-
-  return await conversationResponse(populated);
 };
 
 export const getConversations = async ({ page, limit } = {}, user) => {

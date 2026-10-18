@@ -26,6 +26,7 @@ export const signupSchema = (lang) => {
       password: generalValidationFields.password(lang),
       confirmPassword: generalValidationFields.passwordPresence(lang),
       gender: generalValidationFields.gender(lang),
+      DOB: generalValidationFields.DOB(lang),
     })
     .superRefine((data, ctx) => {
       generalValidationFields.matchFields({
