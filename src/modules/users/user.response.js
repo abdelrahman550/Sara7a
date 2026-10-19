@@ -10,5 +10,6 @@ export const userResponse = async (user) => {
     coverImage: user.coverImage,
     gender: user.gender,
     role: user.role,
+    twoStepVerification: user.twoStepVerification ?? false,
   };
 };
