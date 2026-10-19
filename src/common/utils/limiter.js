@@ -1,15 +1,6 @@
 import { ipKeyGenerator, rateLimit } from "express-rate-limit";
-import geoip from "geoip-lite";
 import { client } from "../../DB/connection.redis.js";
 import { TooManyRequestsException } from "../exceptions/error.exception.js";
-
-function fromWhere(ip) {
-  try {
-    return geoip.lookup(ip);
-  } catch (error) {
-    console.log(error);
-  }
-}
 
 export const generateLimiter = ({
   ttl = 15,
@@ -22,10 +13,8 @@ export const generateLimiter = ({
 }) => {
   return rateLimit({
     windowMs: ttl * 60 * 1000,
-    limit: function (req) {
-      const data = fromWhere(req.ip);
-      return data?.country == "EG" ? limitCount : 0;
-    },
+    // The same allowance for every caller — no GeoIP special-casing.
+    limit: limitCount,
     legacyHeaders,
     standardHeaders,
     skipSuccessfulRequests,
