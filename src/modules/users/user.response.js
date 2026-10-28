@@ -5,7 +5,7 @@ export const userResponse = async (user) => {
     _id: user._id,
     userName: user.userName,
     email: user.email,
-    phone: await decryption(user.phone),
+    phone: user.phone ? await decryption(user.phone) : undefined,
     image: user.image,
     coverImage: user.coverImage,
     gender: user.gender,
